@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.situ.lession1226.dao.StudentDAO">
+    <select id="findAll" resultType="Student">
+        select id,
+        stu_id,
+        name,
+        pinyin,
+        sex,
+        birthday,
+        phone,
+        wechat,
+        email
+        from t_student
+        <where>
+            <if test="stuId!=null and stuId!=''">
+                and stu_id = #{stuId}
+            </if>
+            <if test="name!=null and name!=''">
+                <bind name="nameLike" value="'%'+name+'%'"/>
+                and `name` like #{nameLike}
+            </if>
+            <if test="sex!=null and sex!=''">
+                and sex = #{sex}
+            </if>
+            <if test="phone!=null and phone!=''">
+                <bind name="phoneLike" value="'%'+phone+'%'"/>
+                and phone like #{phoneLike}
+            </if>
+            <if test="email!=null and email!=''">
+                <bind name="emailLike" value="'%'+email+'%'"/>
+                and email like #{emailLike}
+            </if>
+        </where>
+    </select>
+
+    <!--根据主键查询唯一学生-->
+    <select id="findById" resultType="Student">
+        select id,
+               stu_id,
+               name,
+               pinyin,
+               sex,
+               birthday,
+               phone,
+               wechat,
+               email
+        from t_student
+        where id = #{id}
+    </select>
+
+    <!--根据主键批量删除-->
+    <delete id="deleteByIds">
+        delete from t_student where id in
+        <foreach collection="ids" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--保存学生信息-->
+    <insert id="save">
+        insert into t_student (stu_id, name, pinyin, sex, birthday, phone, email, wechat)
+        values (#{stuId},
+                #{name},
+                #{pinyin},
+                #{sex},
+                #{birthday},
+                #{phone},
+                #{email},
+                #{wechat})
+    </insert>
+    
+    <!--修改学生信息，部分修改-->
+    <update id="update">
+        update t_student
+        <set>
+            <if test="stuId!=null and stuId!=''">
+                stu_id = #{stuId},
+            </if>
+            <if test="name!=null and name!=''">
+                `name` = #{name},
+            </if>
+            <if test="pinyin!=null and pinyin!=''">
+                pinyin = #{pinyin},
+            </if>
+            <if test="sex!=null and sex!=''">
+                sex = #{sex},
+            </if>
+            <if test="birthday!=null">
+                birthday = #{birthday},
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone = #{phone},
+            </if>
+            <if test="email!=null and email!=''">
+                email = #{email},
+            </if>
+            <if test="wechat!=null and wechat!=''">
+                wechat = #{wechat},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>
